@@ -1,2 +1,2 @@
 #!/bin/bash
-ls -Ap | paste -sd " , "
+ls -ap | paste -sd " , "
