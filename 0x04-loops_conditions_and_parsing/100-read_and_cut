@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Displays the contents of the file `/etc/passwd`.
+
+IFS=':'
+
+while read -r username _ uid _ _ home _; do
+    if [ -n "$username" ]; then
+        echo "$username:$uid:$home"
+    fi
+done < /etc/passwd
