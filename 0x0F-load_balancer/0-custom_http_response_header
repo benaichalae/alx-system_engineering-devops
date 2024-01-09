@@ -4,6 +4,7 @@ sudo apt-get update -y
 sudo apt-get install nginx -y
 sudo service nginx start
 sudo ufw allow 'Nginx HTTP'
-echo "HOLBERTON" | sudo tee /var/www/html/index.html
+echo "Hello World!" | sudo tee /var/www/html/index.html
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/error_404.html
 sudo sed -i "/server_name _/a add_header X-Served-By $HOSTNAME;" /etc/nginx/sites-enabled/default
 sudo service nginx restart
