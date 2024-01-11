@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 # Debugging Nginx on port 80
-sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-available/default_backup
-sudo sed -i 's/8080/80/' /etc/nginx/sites-available/default
+sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+sudo sed -i 's/8080/80/' /etc/nginx/sites-enabled/default
 sudo service nginx restart
