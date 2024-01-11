@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Debugging Nginx on port 80
+cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default_backup
+sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
+service nginx restart
