@@ -1,43 +1,26 @@
 #!/usr/bin/env bash
-# Function to display information about a subdomain
-display_info() {
-    local subdomain=$1
-    local domain=$2
-    local record_type=$3
-    local destination=$4
+# Displays informtation about subdomains
 
-    echo "The subdomain $subdomain is a $record_type record and points to $destination"
+dns_config () {
+    local script
+    script=$(dig "$2"."$1" +short)
+    
+    if [ -n "$script" ]; then
+        local record_type=$(echo "$script" | awk '{print $1}')
+        local destination=$(echo "$script" | awk '{print $2}')
+        echo "The subdomain $2 is a $record_type record and points to $destination"
+    else
+        echo "No information found for subdomain $2"
+    fi
 }
 
-# Function to get information about a subdomain
-get_subdomain_info() {
-    local subdomain=$1
-    local domain=$2
-
-    # Use dig to get information about the subdomain
-    local result=$(dig $subdomain.$domain +short)
-
-    # Extract the record type and destination IP from the result
-    local record_type=$(echo "$result" | awk '{print $1}')
-    local destination=$(echo "$result" | awk '{print $2}')
-
-    # Display the information
-    display_info $subdomain $domain $record_type $destination
-}
-
-# Main script logic
-domain=$1
-subdomain=$2
-
-# Default subdomains
-subdomains=("www" "lb-01" "web-01" "web-02")
-
-if [ -z "$subdomain" ]; then
-    # Display information for default subdomains
-    for sub in "${subdomains[@]}"; do
-        get_subdomain_info $sub $domain
+if [ "$#" == 1 ]; then
+    domains=("www" "lb-01" "web-01" "web-02")
+    for subdomain in "${domains[@]}"; do
+        dns_config "$1" "$subdomain"
     done
+elif [ "$#" == 2 ]; then
+    dns_config "$1" "$2"
 else
-    # Display information for the specified subdomain
-    get_subdomain_info $subdomain $domain
+    echo "Usage: $0 domain [subdomain]"
 fi
