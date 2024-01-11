@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Function to display information about a subdomain
+display_info() {
+    local subdomain=$1
+    local domain=$2
+    local record_type=$3
+    local destination=$4
+
+    echo "The subdomain $subdomain is a $record_type record and points to $destination"
+}
+
+# Function to get information about a subdomain
+get_subdomain_info() {
+    local subdomain=$1
+    local domain=$2
+
+    # Use dig to get information about the subdomain
+    local result=$(dig $subdomain.$domain +short)
+
+    # Extract the record type and destination IP from the result
+    local record_type=$(echo "$result" | awk '{print $1}')
+    local destination=$(echo "$result" | awk '{print $2}')
+
+    # Display the information
+    display_info $subdomain $domain $record_type $destination
+}
+
+# Main script logic
+domain=$1
+subdomain=$2
+
+# Default subdomains
+subdomains=("www" "lb-01" "web-01" "web-02")
+
+if [ -z "$subdomain" ]; then
+    # Display information for default subdomains
+    for sub in "${subdomains[@]}"; do
+        get_subdomain_info $sub $domain
+    done
+else
+    # Display information for the specified subdomain
+    get_subdomain_info $subdomain $domain
+fi
