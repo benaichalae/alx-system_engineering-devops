@@ -1,17 +1,15 @@
 #!/usr/bin/python3
-"""Exports employee's tasks to a CSV file"""
-import csv
+"""Exports employee's tasks to a JSON file"""
+import json
 import requests
 from sys import argv
 
-def export_to_csv(user_id, username, tasks):
-    filename = "{}.csv".format(user_id)
-    with open(filename, 'w', newline='') as csv_file:
-        csv_writer = csv.writer(csv_file, quoting=csv.QUOTE_ALL)
-        csv_writer.writerow(["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
-        for task in tasks:
-            csv_writer.writerow([user_id, username, str(task['completed']), task['title']])
-    print("CSV file '{}' has been created.".format(filename))
+def export_to_json(user_id, username, tasks):
+    data = {user_id: [{"task": task['title'], "completed": task['completed'], "username": username} for task in tasks]}
+    filename = "{}.json".format(user_id)
+    with open(filename, 'w') as json_file:
+        json.dump(data, json_file)
+    print("JSON file '{}' has been created.".format(filename))
 
 if __name__ == "__main__":
     if len(argv) != 2 or not argv[1].isdigit():
@@ -28,4 +26,4 @@ if __name__ == "__main__":
             todo_response = requests.get('https://jsonplaceholder.typicode.com/todos?userId={}'.format(employee_id))
             todo_data = todo_response.json()
 
-            export_to_csv(employee_id, user_data['username'], todo_data)
+            export_to_json(employee_id, user_data['username'], todo_data)
