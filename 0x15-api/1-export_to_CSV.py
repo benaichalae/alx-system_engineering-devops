@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ Contains a python script that, using the JSONplaceholder"""
-import requests
 import csv
+import requests
 from sys import argv
 
 
@@ -15,7 +15,7 @@ def export_to_csv(employee_id, user_data, todo_data):
 
         for task in todo_data:
             csv_writer.writerow(
-                    [employee_id, user_data['username'],
+                    [employee_id, user_data['id'], user_data['username'],
                         str(task['completed']), task['title']]
                     )
 
@@ -35,11 +35,14 @@ if __name__ == "__main__":
                 )
         user_data = user_response.json()
 
-        todo_response = requests.get(
+        if 'id' not in user_data or 'username' not in user_data:
+            print("Invalid user ID.")
+        else:
+            todo_response = requests.get(
                 'https://jsonplaceholder.typicode.com/todos?userId={}'.format(
                     employee_id
                     )
                 )
-        todo_data = todo_response.json()
+            todo_data = todo_response.json()
 
-        export_to_csv(employee_id, user_data, todo_data)
+            export_to_csv(employee_id, user_data, todo_data)
