@@ -8,7 +8,10 @@ and prints a sorted count of given keywords
 import requests
 
 
-def recurse(subreddit, hot_list=[], after=None):
+def count_words(subreddit, word_list, after=None, counts=None):
+    if counts is None:
+        counts = {}
+
     url = "https://www.reddit.com/r/{}/hot.json?limit=100"
     if after:
         url += "&after={after}"
@@ -19,12 +22,17 @@ def recurse(subreddit, hot_list=[], after=None):
         data = response.json()
         posts = data['data']['children']
         for post in posts:
-            hot_list.append(post['data']['title'])
+            title = post['data']['title'].lower()
+            for word in word_list:
+                if word.lower() in title:
+                    counts[word.lower()] = counts.get(word.lower(), 0) + title.count(word.lower())
 
         after = data['data'].get('after')
         if after:
-            return recurse(subreddit, hot_list, after)
+            return count_words(subreddit, word_list, after, counts)
         else:
-            return hot_list
+            sorted_counts = sorted(counts.items(), key=lambda x: (-x[1], x[0]))
+            for word, count in sorted_counts:
+                print(f"{word}: {count}")
     else:
-        return None
+        return
